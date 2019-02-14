@@ -86,12 +86,20 @@ def ro_curve(X, Y):
     plt.title('ROC curve')
 
 if __name__ == '__main__':
-    data = pd.read_csv('credit.clean', sep='\t', index_col=None)
+    data = pd.read_csv('Credit_test.clean', sep='\t', index_col=None)
     # CALC
-    X = data.loc[:, data.columns.difference(['TARGET'])].values
+    X = data.loc[:, data.columns.difference(['TARGET'])]
     y = data['TARGET'].values
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=42)
+    del X['DL_DOCUMENT_FL']
+
+    for col in X.columns:
+        X[col] = X[col] / X[col].max()
+
+    print (X.info())
+    X = X.values
+
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, random_state=42)
 
     lr = LogisticRegression(random_state=42)
     lr.fit(X_train, y_train)
